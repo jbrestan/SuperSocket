@@ -187,18 +187,12 @@ namespace SuperSocket.SocketEngine
 
             switch (SecureProtocol)
             {
-                case (SslProtocols.Default):
-                case (SslProtocols.Tls):
-                case (SslProtocols.Ssl3):
-                    SslStream sslStream = CreateSslStream(certConfig);
-                    result = sslStream.BeginAuthenticateAsServer(AppSession.AppServer.Certificate, certConfig.ClientCertificateRequired, SslProtocols.Default, false, asyncCallback, sslStream);
-                    break;
-                case (SslProtocols.Ssl2):
-                    SslStream ssl2Stream = CreateSslStream(certConfig);
-                    result = ssl2Stream.BeginAuthenticateAsServer(AppSession.AppServer.Certificate, certConfig.ClientCertificateRequired, SslProtocols.Ssl2, false, asyncCallback, ssl2Stream);
+                case (SslProtocols.None):
+                    m_Stream = new NetworkStream(Client);
                     break;
                 default:
-                    m_Stream = new NetworkStream(Client);
+                    var stream = CreateSslStream(certConfig);
+                    result = stream.BeginAuthenticateAsServer(AppSession.AppServer.Certificate, certConfig.ClientCertificateRequired, SecureProtocol, false, asyncCallback, stream);
                     break;
             }
 
